@@ -100,20 +100,15 @@ int main() {
 
     conectarNodos(nodoS, nodoT, 25); 
     printf("\n--- Conexiones no dirigidas creadas ---\n");
-
-	conectarNodos(nodoA, nodoC, 45);
-	printf("Conexion bidireccional entre A y C creada\n");
-
-	conectarNodos(nodoA, nodoD, 10);
-	printf("Conexion bidireccional entre A y D creada\n");
-
 	// crear arreglo de nodos
-	Nodo *nodos[] = {nodoA, nodoB, nodoC, nodoD};
+	Nodo *nodos[] = {nodoA, nodoB, nodoC, nodoD, nodoE, nodoF, nodoG, nodoH, nodoI, nodoJ, nodoK, nodoL, nodoM, nodoN, nodoO, nodoP, nodoQ, nodoR, nodoS, nodoT};
 	int numNodos = sizeof(nodos) / sizeof(nodos[0]);
 
-	TablaResultados *resultado = dijkstra(nodos, numNodos, 0);
+    int posNodo = 19;
 
-	printf("\n--- Resultados Dijkstra desde Nodo %c ---\n", nodos[0]->id);
+	TablaResultados *resultado = dijkstra(nodos, numNodos, posNodo);
+
+	printf("\n--- Resultados Dijkstra desde Nodo %c ---\n", nodos[posNodo]->id);
 	for(int i = 0; i < numNodos; i++) {
 		printf("Distancia a %c: %d\n", nodos[i]->id, resultado->distancias[i]);
 	}
