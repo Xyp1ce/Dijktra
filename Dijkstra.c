@@ -98,7 +98,7 @@ int main() {
 
     conectarNodos(nodoR, nodoT, 230);
 
-    conectarNodos(nodoS, nodoT, 25); 
+    conectarNodos(nodoS, nodoT, 25);
     printf("\n--- Conexiones no dirigidas creadas ---\n");
 	// crear arreglo de nodos
 	Nodo *nodos[] = {nodoA, nodoB, nodoC, nodoD, nodoE, nodoF, nodoG, nodoH, nodoI, nodoJ, nodoK, nodoL, nodoM, nodoN, nodoO, nodoP, nodoQ, nodoR, nodoS, nodoT};
@@ -163,61 +163,65 @@ TablaResultados *dijkstra(Nodo **nodos, int numNodos, int indiceInicio)
 	resultado->distancias = (int*) malloc(numNodos * sizeof(int));
 	resultado->anteriores = (int*) malloc(numNodos * sizeof(int));
 
-	// array tmp
+	// array tmp para nodos visitado
 	int *visitados = (int*) malloc(numNodos * sizeof(int));
 
 	//paso 1. inicializar distancias, origen en 0, lo demas INF
 	for (int i = 0; i < numNodos; i++)
 	{
-		resultado->distancias[i] = INF;
-		resultado->anteriores[i] = -1;	// sin nodo anterior aun
-		visitados[i] = 0;		// false
+		resultado->distancias[i] = INF;	// todos inician en INFINITO
+		resultado->anteriores[i] = -1;	// sin nodos anteriores aun
+		visitados[i] = 0;				// por defaul, ninguna esta visitado
 	}
 
 	resultado->distancias[indiceInicio] = 0;
 
 	//paso 2. encontrar el camino mas corto para todos los vertices
-	for (int conteo = 0; conteo < numNodos - 1; conteo++)
+	for (int conteo = 0; conteo < numNodos - 1; conteo++)	// se cuentan todos los nodos menos 1, porque el ultimo se visitara automaticamente
 	{
-		int minDistancia = INF;
-		int u = -1;	// idx del nodo con distancia minima
+		int distMinActual = INF;	// inicializar distancia mas corta
+		int nodoMin = -1;		// indice del nodo con la menor distancia (para seguir)
+
+		// encontrar el nodo con la distancia mas corta que no ha sido visitado
 		for (int v = 0; v < numNodos; v++)
 		{
-			if (!visitados[v] && resultado->distancias[v] <= minDistancia)
+			// si el nodo no ha sido visitado y su distancia es menor a la distancia minima actual
+			if (!visitados[v] && resultado->distancias[v] <= distMinActual)
 			{
-				minDistancia = resultado->distancias[v];
-				u = v;
+				distMinActual = resultado->distancias[v];	// actualizar distancia minima en la tabla
+				nodoMin = v;	// seteamos el indice del nuevo nodo a visitar
 			}
 		}
-		// si todos son inalcanzables, salir del loop
-		if (u == -1) break;
+		// si todos los nodos son inalcanzables, salir del loop
+		if (nodoMin == -1) break;
 
-		// marcar el nodo elegido como visitado
-		visitados[u] = 1;
+		// marcar el nodo elegido como visitado para no volver a visitarlo
+		visitados[nodoMin] = 1;
 
 		// actualizar distancia de los nodos adyacentes del nodo elegido
-		Nodo *actual = nodos[u];
+		Nodo *actual = nodos[nodoMin];
 		for (int i = 0; i < actual->cant; i++)
 		{
-			Nodo *destino_adyacente = actual->salidas[i];
-			int peso_adyacente = actual->pesos[i];
+			Nodo *adyacenteActual = actual->salidas[i];
+			int pesoAdyacente = actual->pesos[i];
 
-			// buscar idx del destino en array principal
-			int idx_destino = -1;
+			// encontrar el primer nodo adyacente y encontrar su indice en el arreglo de nodos para actualizar su distancia
+			int idxDestino = -1;
 			for (int j = 0; j < numNodos; j++)
 			{
-				if (nodos[j] == destino_adyacente)
+				if (nodos[j] == adyacenteActual)
 				{
-					idx_destino = j;
+					idxDestino = j;
 					break;
 				}
 			}
-			//relajar arista
-			if (idx_destino != -1 && !visitados[idx_destino] && resultado->distancias[u] != INF &&
-				resultado->distancias[u] + peso_adyacente < resultado->distancias[idx_destino])
+			if (idxDestino != -1 &&	// si encontramos el indice del primer nodo adyacente
+				!visitados[idxDestino] && // el nodo adyacente no ha sido visitado
+				resultado->distancias[nodoMin] != INF &&	// el nodo actual es alcanzable
+				resultado->distancias[nodoMin] + pesoAdyacente < resultado->distancias[idxDestino])	// la distancia al nodo destino a traves del nodo actual es menor que la distancia previamente registrada
 			{
-				resultado->distancias[idx_destino] = resultado->distancias[u] + peso_adyacente;
-				resultado->anteriores[idx_destino] = u;
+				resultado->distancias[idxDestino] = resultado->distancias[nodoMin] + pesoAdyacente;	// actualizar la distancia al nodo adyacente
+				resultado->anteriores[idxDestino] = nodoMin;	// agregar al arreglo de anteriores el nodo actual para llegar al nodo adyacente
 			}
 		}
 	}
