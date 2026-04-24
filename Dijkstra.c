@@ -110,7 +110,7 @@ int main() {
 
 	printf("\n--- Resultados Dijkstra desde Nodo %c ---\n", nodos[posNodo]->id);
 	for(int i = 0; i < numNodos; i++) {
-		printf("Distancia a %c: %d\n", nodos[i]->id, resultado->distancias[i]);
+		printf("Distancia a %c: %d\t anterior = %c\n", nodos[i]->id, resultado->distancias[i], resultado->anteriores[i] != -1 ? nodos[resultado->anteriores[i]]->id : '-');
 	}
 
 	return 0;
