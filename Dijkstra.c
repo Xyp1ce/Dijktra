@@ -110,14 +110,36 @@ int main() {
 
 	int numNodos = sizeof(nodos) / sizeof(nodos[0]);
 
-	int posNodo = 19;
+	int nodoInicio = -1;
+	int nodoFinal = -1;
+	// seleccionar nodo de inicio
+	do {
+		for (int m = 0; m < numNodos; m++) {
+			printf("%d: Nodo %c\n", m, nodos[m]->id);
+		}
+		printf("\nIngrese el numero del nodo de origen: ");
+		fflush(stdin);
+		scanf("%d", &nodoInicio);
+	} while (nodoInicio < 0 || nodoInicio >= numNodos);
+	// seleccionar nodo destino
+	do {
+		for (int m = 0; m < numNodos; m++) {
+			printf("%d: Nodo %c\n", m, nodos[m]->id);
+		}
+		printf("\n Ingrese el numero del nodo destino: ");
+		fflush(stdin);
+		scanf("%d", &nodoFinal);
+	} while ( nodoFinal == nodoInicio || nodoFinal < 0 || nodoFinal >= numNodos);
 
-	TablaResultados *resultado = dijkstra(nodos, numNodos, posNodo);
+	// todo: implementar dijkstra que, no solo imprima tabla completa, sino que imprima el camino, dado nodo inicio y nodo fin
+	TablaResultados *resultado = dijkstra(nodos, numNodos, nodoInicio);
 
-	printf("\n--- Resultados Dijkstra desde Nodo %c ---\n", nodos[posNodo]->id);
+	printf("\n--- Resultados Dijkstra desde Nodo %c ---\n", nodos[nodoInicio]->id);
+	printf("\nNodo\tCosto\tNodo anterior\n");
 	for(int i = 0; i < numNodos; i++) {
-		printf("Distancia a %c: %d\t anterior = %c\n", nodos[i]->id, resultado->distancias[i], resultado->anteriores[i] != -1 ? nodos[resultado->anteriores[i]]->id : '-');
+		printf("%c\t %d\t %c\n", nodos[i]->id, resultado->distancias[i], resultado->anteriores[i] != -1 ? nodos[resultado->anteriores[i]]->id : '-');
 	}
+	// todo: camino optimo de nodoInicio a nodoFinal
 
 	return 0;
 }
